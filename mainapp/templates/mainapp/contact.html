@@ -1,0 +1,27 @@
+{% extends 'mainapp/base.html' %}
+{% load crispy_forms_tags  %}
+
+{% block content%}
+    
+    <div>
+        <form method="POST">
+            <div class="my-3">
+                {% csrf_token %}
+                {{form|crispy}}
+                <button class="btn btn-primary my-3" type="submit">Submit</button>
+                </form>
+            </div>
+        </form>
+    </div>
+
+    {% comment %} <script>
+        $(document).ready(function () {
+        {% if messages %}
+        // Toasts
+        $(".toast").toast({ delay: 5000 });
+        $(".toast").toast("show");
+        {% endif %}
+        });
+    </script> {% endcomment %}
+
+{% endblock%}

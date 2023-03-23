@@ -1,0 +1,8 @@
+{% extends 'authapp/base.html' %}
+{% block content %}
+    <h1>Привет, {{user.username}}</h1>
+    <h5>Имя: {{user.first_name}} {{user.last_name}}</h5>
+    <h5> Возраст: {{user.age}}</h5>
+    <h5>Эл.почта: {{user.email}}</h5>
+{% endblock %}
+
