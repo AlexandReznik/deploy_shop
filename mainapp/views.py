@@ -72,13 +72,14 @@ def add_to_basket(request, product_id):
     if not created:
         basket_item.quantity += 1
         basket_item.save()
-        messages.success(
-            request, 'Product has been added to your basket!')
+        messages.add_message(
+            request, messages.INFO, _("Product has been added to your basket!"))
     return redirect('/')
 
 
 def remove_from_basket(request, basket_item_id):
     basket_item = BasketItem.objects.get(id=basket_item_id)
     basket_item.delete()
-    messages.success(request, 'Product has been removed from your basket!')
+    messages.add_message(
+        request, messages.INFO, _("Product has been removed from your basket!"))
     return redirect('/')
