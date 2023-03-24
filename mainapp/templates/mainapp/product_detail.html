@@ -1,0 +1,13 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content %}
+  <h1>{{ object.title }}</h1>
+  <h5>{{object.description}}</h5>
+  <p>Price: {{ object.cost }}</p>
+  <p>Quantity: {{ object.quantity }}</p>
+  <form method="post" action="{% url 'mainapp:add_to_basket' product_id=product.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Add to basket</button>
+  </form>
+  <a href="{% url 'mainapp:mainapp' %}" class="btn btn-primary">Назад</a>
+{% endblock %}
