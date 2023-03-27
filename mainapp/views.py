@@ -20,7 +20,8 @@ from .forms import BasketForm
 
 def basket(request):
     basket_items = BasketItem.objects.all()
-    context = {'basket_items': basket_items}
+    total_price = sum(item.product.cost*item.quantity for item in basket_items)
+    context = {'basket_items': basket_items, 'total_price': total_price}
     return render(request, 'mainapp/basket.html', context)
 
 
@@ -69,12 +70,13 @@ def add_to_basket(request, product_id):
         # user=request.user,
         product=product
     )
+    messages.add_message(
+        request, messages.INFO, _("Product has been added to your basket!"))
     if not created:
         basket_item.quantity += 1
         basket_item.save()
-        messages.add_message(
-            request, messages.INFO, _("Product has been added to your basket!"))
-    return redirect('/')
+
+    return redirect('http://127.0.0.1:8000/mainapp/basket/')
 
 
 def remove_from_basket(request, basket_item_id):
@@ -82,4 +84,4 @@ def remove_from_basket(request, basket_item_id):
     basket_item.delete()
     messages.add_message(
         request, messages.INFO, _("Product has been removed from your basket!"))
-    return redirect('/')
+    return redirect('http://127.0.0.1:8000/mainapp/basket/')
