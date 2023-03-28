@@ -13,4 +13,7 @@ urlpatterns = [
     path('remove_from_basket/<int:basket_item_id>/',
          views.remove_from_basket, name='remove_from_basket'),
     path('basket/', views.basket, name='basket'),
+    path('category/<int:category_id>/',
+         views.product_list_by_category, name='product_list_by_category'),
+    path('categories/', views.CategoryListView.as_view(), name='categories'),
 ]

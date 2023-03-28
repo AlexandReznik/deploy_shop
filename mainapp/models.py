@@ -9,6 +9,13 @@ class GoodsManager(models.Manager):
         return super().get_queryset().filter(deleted=False)
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     objects = GoodsManager()
     title = models.CharField(max_length=300, verbose_name='Заголовок')
@@ -20,6 +27,8 @@ class Product(models.Model):
         auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
     deleted = models.BooleanField(default=False, verbose_name='Удалено')
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, default=6)
 
     def __str__(self):
         return f'{self.title}'
@@ -34,6 +43,5 @@ class Product(models.Model):
 
 
 class BasketItem(models.Model):
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1, max_length=6)

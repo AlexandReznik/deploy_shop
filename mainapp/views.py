@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from mainapp import models as mainapp_models
 from .forms import ContactForm
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.urls import reverse
 from django.contrib import messages
 from django.forms import modelform_factory
-from .models import Product, BasketItem
+from .models import Product, BasketItem, Category
 from .forms import BasketForm
 
 
@@ -32,6 +32,36 @@ class MainPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MainPageView, self).get_context_data(**kwargs)
         context["objects"] = Product.objects.all()
+        return context
+
+
+# class ProductListByCategoryView(TemplateView):
+#     template_name = 'mainapp/category_product.html'
+#     context_object_name = 'products'
+
+#     def get_queryset(self):
+#         category_id = self.kwargs['category_id']
+#         queryset = Product.objects.filter(category=category_id)
+#         return queryset
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['categories'] = self.kwargs['category_id']
+#         return context
+
+def product_list_by_category(request, category_id):
+    products = Product.objects.filter(category=category_id)
+    context = {'products': products}
+    return render(request, 'mainapp/category_product.html', context)
+
+
+class CategoryListView(ListView):
+    template_name = 'mainapp/category.html'
+    model = Category
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context["category"] = Category.objects.all()
         return context
 
 

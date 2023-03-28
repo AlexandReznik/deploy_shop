@@ -1,0 +1,24 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content%}
+    <h1><a href="{% url 'mainapp:categories'%}">Categories</a></h1>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        
+        {% for item in products %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.category.name }}</p>
+                    <p class="card-text">{{ item.cost }}</p>
+                </div>
+                <a href="{% url 'mainapp:product_detail' pk=item.pk %}" class="btn btn-primary my-2">See details</a>
+                <form method="post" action="{% url 'mainapp:add_to_basket' product_id=item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Add to basket</button>
+                  </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

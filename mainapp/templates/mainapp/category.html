@@ -1,0 +1,10 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content%}
+    <ul class="list-group">
+        <li class="list-group-item"><a href="{% url 'mainapp:mainapp'%}">All</a></li>
+        {% for item in category%}
+            <li class="list-group-item"><a href="{% url 'mainapp:product_list_by_category'  category_id=item.id %}">{{item.name}}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
