@@ -11,9 +11,9 @@ from django.contrib import messages
 from mainapp import forms
 from config.settings import RECIPIENTS_EMAIL
 from django.urls import reverse_lazy
-from django.urls import reverse
+# from django.urls import reverse
 from django.contrib import messages
-from django.forms import modelform_factory
+# from django.forms import modelform_factory
 from .models import Product, BasketItem, Category
 from .forms import BasketForm
 
@@ -82,11 +82,11 @@ def contact_view(request):
             try:
                 send_mail(f'Message from {email_address} - {first_name}', message,
                           email_address, RECIPIENTS_EMAIL)
-                messages.add_message(
-                    request, messages.INFO, _("Form submittet!"))
+                messages.success(
+                    request, _("Form submittet!"))
             except BadHeaderError:
-                messages.add_message(
-                    request, messages.WARNING, _("Form not submitted!"))
+                messages.warning(
+                    request, _("Form not submitted!"))
                 return HttpResponse('Error.')
             return HttpResponseRedirect(reverse_lazy("mainapp:contacts"))
     else:
@@ -100,8 +100,8 @@ def add_to_basket(request, product_id):
         # user=request.user,
         product=product
     )
-    messages.add_message(
-        request, messages.INFO, _("Product has been added to your basket!"))
+    messages.success(
+        request, _("Product has been added to your basket!"))
     if not created:
         basket_item.quantity += 1
         basket_item.save()
@@ -112,6 +112,6 @@ def add_to_basket(request, product_id):
 def remove_from_basket(request, basket_item_id):
     basket_item = BasketItem.objects.get(id=basket_item_id)
     basket_item.delete()
-    messages.add_message(
-        request, messages.INFO, _("Product has been removed from your basket!"))
+    messages.success(
+        request, _("Product has been removed from your basket!"))
     return redirect('http://127.0.0.1:8000/mainapp/basket/')

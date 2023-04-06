@@ -14,11 +14,17 @@
     
 
     {% include 'authapp/includes/nav.html' %}
-    {% block messages %}
-        {% include 'authapp/includes/messages.html' %}
-    {% endblock messages %}
+    {% include 'authapp/includes/messages.html' %}
         <div class="container">
             {% block content %}
+            {% comment %} {% if messages %}
+                <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+{% endif %} {% endcomment %}
+
             
 
             

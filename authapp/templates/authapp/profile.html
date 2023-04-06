@@ -1,8 +1,8 @@
 {% extends 'authapp/base.html' %}
 {% block content %}
-    <h1>Привет, {{user.username}}</h1>
-    {%if user.first_name %}<h5>Имя: {{user.first_name}} </h5>{% endif %}
-    {%if user.age %}<h5> Возраст: {{user.age}}</h5>{%endif%}
-    <h5>Эл.почта: {{user.email}}</h5>
+    <h1>Hi, {{user.username}}</h1>
+    {%if user.first_name %}<h5>Name: {{user.first_name}} </h5>{% endif %}
+    {%if user.age %}<h5> Age: {{user.age}}</h5>{%endif%}
+    <h5>Email: {{user.email}}</h5>
 {% endblock %}
 
