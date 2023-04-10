@@ -18,4 +18,6 @@ urlpatterns = [
     path('category/<int:category_id>/',
          views.product_list_by_category, name='product_list_by_category'),
     path('categories/', views.CategoryListView.as_view(), name='categories'),
+    path("product_feedback/", views.ProductFeedbackFormProcessView.as_view(),
+         name="product_feedback",),
 ]
