@@ -27,7 +27,3 @@ class CustomLogoutView(LogoutView):
 
 class ProfileView(TemplateView):
     template_name = 'authapp/profile.html'
-# class ProfileEditView(UserPassesTestMixin, UpdateView):
-#     template_view = 'authapp/profile_edit.html'
-#     model = get_user_model()
-#     form_class = forms.CustomUserChangeForm

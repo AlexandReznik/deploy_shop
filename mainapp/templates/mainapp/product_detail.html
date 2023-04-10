@@ -1,58 +1,34 @@
 {% extends 'mainapp/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-  <h1>{{ product_object.title }}</h1>
-  <h5>{{ product_object.description}}</h5>
-  <p>Price: {{ product_object.cost }}</p>
-  <p>Quantity: {{ product_object.quantity }}</p>
-  <form method="post" action="{% url 'mainapp:add_to_basket' product_id=product_object.id %}">
+  <h1>{{ post.title }}</h1>
+  <h5>{{ post.description}}</h5>
+  <p>Price: {{ post.cost }}</p>
+  <p>Quantity: {{ post.quantity }}</p>
+  <form method="post" action="{% url 'mainapp:add_to_basket' product_id=post.id %}">
     {% csrf_token %}
     <button type="submit" class="btn btn-success">Add to basket</button>
   </form>
   <a href="{% url 'mainapp:mainapp' %}" class="btn btn-primary">Back to list</a>
-  <h3>Reviews</h3>
-  <div id="feedback_list">
-    {% if feedback_list %}
-      {% for item in feedback_list %}
-        {% include 'mainapp/includes/feedback_card.html' %}
-      {% endfor %}
-    {% else %}
-    <p>No feedback yet. Be first!</p>
-    {% endif %}
-  </div>
-  {% if feedback_form %}
-    <div class="card" id="cardForm">
+  <h2>Comments</h2>
+    <hr>
+    <h3>Add a comment</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+    <hr>
+    {% for comment in comments %}
+    <div class="card">
+      <div class="card-header">
+        {{ comment.author}} on {{ comment.created_date }}
+      </div>
       <div class="card-body">
-        <h5 class="card-title">Add review</h5>
-        <h6 class="card-subtitle mb-2 text-muted">You didn't review this product</h6>
-        <p class="card-text">
-          <form action="{% url 'mainapp:product_feedback' %}" method="POST" id="feedbackForm">
-            {% csrf_token %}
-            {{ feedback_form|crispy }}
-          </form>
-          <button type="submit" id="feedbackSubmit" class="btn btn-primary btn-block">Send review</button>
-        </p>
+        <p class="card-text">{{ comment.text|linebreaks }}</p>
       </div>
     </div>
-    {% endif %}
+    {% endfor %}
+  </div>
 {% endblock content %}
-{% block js %}
-<script>
-$(document).ready(function () {
-    {% if feedback_form %}
-        $("#feedbackSubmit").click(function () {
-        $("#cardForm").hide();
-        var $form = $("#feedbackForm");
-        $.ajax({
-          type: "POST",
-          url: $form.attr("action"),
-          data: $form.serialize(),
-          success: function (data) {
-            $("#feedback_list").append(data.card);
-          }
-        });
-      });
-    {% endif %}
-  });
-</script>
-{% endblock js %} 
+  

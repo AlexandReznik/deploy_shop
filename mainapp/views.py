@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.utils import timezone
 from mainapp import models as mainapp_models
 from .forms import ContactForm
-from django.views.generic import TemplateView, DetailView, ListView, CreateView
+from django.views.generic import TemplateView, ListView, View
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
@@ -12,21 +12,10 @@ from mainapp import forms
 from config.settings import RECIPIENTS_EMAIL
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
-from django.core.cache import cache
-# from django.urls import reverse
 from django.contrib import messages
-# from django.forms import modelform_factory
-from .models import Product, BasketItem, Category, ProductFeedback
-from .forms import BasketForm, ProductFeedbackForm
+from .models import Product, BasketItem, Category
 from rest_framework.viewsets import ModelViewSet
 from .serializers import ProductModelSerializer, CategoryModelSerializer
-import logging
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-
-
-logger = logging.getLogger(__name__)
 
 
 def basket(request):
@@ -46,20 +35,6 @@ class MainPageView(TemplateView):
         return context
 
 
-# class ProductListByCategoryView(TemplateView):
-#     template_name = 'mainapp/category_product.html'
-#     context_object_name = 'products'
-
-#     def get_queryset(self):
-#         category_id = self.kwargs['category_id']
-#         queryset = Product.objects.filter(category=category_id)
-#         return queryset
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['categories'] = self.kwargs['category_id']
-#         return context
-
 def product_list_by_category(request, category_id):
     products = Product.objects.filter(category=category_id)
     context = {'products': products}
@@ -76,53 +51,27 @@ class CategoryListView(ListView):
         return context
 
 
-class ProductDetail(TemplateView):
-    template_name = 'mainapp/product_detail.html'
-    model = Product
+class ProductDetailView(View):
+    def get(self, request, pk):
+        post = get_object_or_404(Product, pk=pk)
+        comments = post.comments.filter(approved_comment=True)
+        form = forms.CommentForm()
+        context = {'post': post, 'comments': comments, 'form': form}
+        return render(request, 'mainapp/product_detail.html', context)
 
-    def get_context_data(self, pk=None, **kwargs):
-        logger.debug("Yet another log message")
-        context = super(ProductDetail, self).get_context_data(**kwargs)
-        context["product_object"] = get_object_or_404(
-            mainapp_models.Product, pk=pk
-        )
-        # context["lessons"] = mainapp_models.Lesson.objects.filter(
-        #     course=context["course_object"]
-        # )
-        # context["teachers"] = mainapp_models.CourseTeachers.objects.filter(
-        #     course=context["course_object"]
-        # )
-        if not self.request.user.is_anonymous:
-            if not mainapp_models.ProductFeedback.objects.filter(
-                product=context["product_object"], user=self.request.user
-            ).count():
-                context["feedback_form"] = ProductFeedbackForm(
-                    product=context["product_object"], user=self.request.user
-                )
-        context["feedback_list"] = mainapp_models.ProductFeedback.objects.filter(
-            product=context["product_object"]).order_by("-created", "-rating")[:5]
-
-        cached_feedback = cache.get(f"feedback_list_{pk}")
-        if not cached_feedback:
-            context["feedback_list"] = mainapp_models.ProductFeedback.objects.filter(
-                product=context["product_object"]).order_by("-created", "-rating")[:5].select_related()
-            cache.set(f"feedback_list_{pk}",
-                      context["feedback_list"], timeout=300)
-        else:
-            context['feedback_list'] = cached_feedback
-        return context
-
-
-class ProductFeedbackFormProcessView(LoginRequiredMixin, CreateView):
-    model = mainapp_models.ProductFeedback
-    form_class = ProductFeedbackForm
-
-    def form_valid(self, form):
-        self.object = form.save()
-        rendered_card = render_to_string(
-            "mainapp/includes/feedback_card.html", context={"item": self.object}
-        )
-        return JsonResponse({"card": rendered_card})
+    def post(self, request, pk):
+        post = get_object_or_404(Product, pk=pk)
+        form = forms.CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.created_date = timezone.now()
+            comment.save()
+            return redirect('mainapp:product_detail', pk=post.pk)
+        comments = post.comments.filter(approved_comment=True)
+        context = {'post': post, 'comments': comments, 'form': form}
+        return render(request, 'mainapp/product_detail.html', context)
 
 
 def contact_view(request):

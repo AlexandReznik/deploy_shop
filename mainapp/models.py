@@ -1,7 +1,7 @@
 from django.db import models
 from authapp.models import CustomUser
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 
 class GoodsManager(models.Manager):
@@ -47,28 +47,17 @@ class BasketItem(models.Model):
     quantity = models.IntegerField(default=1, max_length=6)
 
 
-class ProductFeedback(models.Model):
-    RATING = (
-        (5, "⭐⭐⭐⭐⭐"),
-        (4, "⭐⭐⭐⭐"),
-        (3, "⭐⭐⭐"),
-        (2, "⭐⭐"),
-        (1, "⭐")
-    )
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name=_("Product")
-    )
-    user = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, verbose_name=_("User")
-    )
-    feedback = models.TextField(
-        default=_("No feedback"), verbose_name=_("Feedback")
-    )
-    rating = models.SmallIntegerField(
-        choices=RATING, default=5, verbose_name=_("Rating")
-    )
-    created = models.DateTimeField(auto_now_add=True, verbose_name="Created")
-    deleted = models.BooleanField(default=False)
+class Comment(models.Model):
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
+    created_date = models.DateTimeField(default=timezone.now)
+    approved_comment = models.BooleanField(default=True)
+
+    def approve(self):
+        self.approved_comment = True
+        self.save()
 
     def __str__(self):
-        return f"{self.product} ({self.user})"
+        return self.text
