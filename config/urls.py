@@ -16,10 +16,39 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from rest_framework.routers import DefaultRouter
+from mainapp.views import ProductModelViewSet, CategoryModelViewSet
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+
+
+router = DefaultRouter()
+router.register('products', ProductModelViewSet)
+router.register('categories', CategoryModelViewSet)
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Library",
+        default_version='0.1',
+        description="Documentation to out project",
+        contact=openapi.Contact(email="admin@admin.local"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='mainapp/')),
     path('mainapp/', include('mainapp.urls', namespace='mainapp')),
     path('authapp/', include('authapp.urls', namespace='authapp')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include(router.urls)),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='schema-swagger-ui'),
+
 ]

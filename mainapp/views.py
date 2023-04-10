@@ -16,6 +16,8 @@ from django.contrib import messages
 # from django.forms import modelform_factory
 from .models import Product, BasketItem, Category
 from .forms import BasketForm
+from rest_framework.viewsets import ModelViewSet
+from .serializers import ProductModelSerializer, CategoryModelSerializer
 
 
 def basket(request):
@@ -115,3 +117,13 @@ def remove_from_basket(request, basket_item_id):
     messages.success(
         request, _("Product has been removed from your basket!"))
     return redirect('http://127.0.0.1:8000/mainapp/basket/')
+
+
+class ProductModelViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductModelSerializer
+
+
+class CategoryModelViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoryModelSerializer
