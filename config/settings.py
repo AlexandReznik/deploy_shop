@@ -141,3 +141,8 @@ RECIPIENTS_EMAIL = ['saha.reznik2004@gmail.com']   # замените на св�
 DEFAULT_FROM_EMAIL = 'sashaaaareznik@gmail.com'  # замените на свою почту
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = "var/email-messages/"
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# MEDIA_ROOT = BASE_DIR / "media"

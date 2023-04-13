@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
   <h1>{{ post.title }}</h1>
+  <img src="{{post.image.url}}" class="img-fluid" alt="{{ post.title }}" >
   <h5>{{ post.description}}</h5>
   <p>Price: {{ post.cost }}</p>
   <p>Quantity: {{ post.quantity }}</p>

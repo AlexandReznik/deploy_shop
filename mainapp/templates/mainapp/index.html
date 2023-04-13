@@ -13,19 +13,18 @@
     <div class="row row-cols-1 row-cols-md-4 g-4">
         
         {% for item in objects %}
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ item.title }}</h5>
-                        <p class="card-text">{{ item.cost }}</p>
-                    </div>
-                    <a href="{% url 'mainapp:product_detail' pk=item.pk %}" class="btn btn-primary my-2">See details</a>
-                    <form method="post" action="{% url 'mainapp:add_to_basket' product_id=item.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success">Add to basket</button>
-                      </form>
+            <div class="card" style="width: 18rem;">
+                <img src="{{item.image.url}}" class="img-fluid" alt="{{ item.title }}" >
+                <div class="card-body">
+                  <h5 class="card-title">{{ item.title }}</h5>
+                  <p class="card-text">{{ item.cost }}</p>
+                  <a href="{% url 'mainapp:product_detail' pk=item.pk %}" class="btn btn-primary">See details</a>
+                  <form method="post" action="{% url 'mainapp:add_to_basket' product_id=item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Add to basket</button>
+                  </form>
                 </div>
-            </div>
+            </div> 
         {% endfor %}
     </div>
     {% comment %} <script>

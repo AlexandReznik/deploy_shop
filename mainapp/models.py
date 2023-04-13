@@ -23,6 +23,8 @@ class Product(models.Model):
     cost = models.DecimalField(
         max_digits=8, decimal_places=2, verbose_name='Стоимость', default=0)
     quantity = models.IntegerField(default=1, verbose_name='Количество')
+    image = models.ImageField(upload_to='products/',
+                              default='products/default_product.png')
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
