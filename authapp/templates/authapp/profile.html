@@ -1,8 +1,11 @@
 {% extends 'authapp/base.html' %}
 {% block content %}
     <h1>Hi, {{user.username}}</h1>
+    <img src="{{user.image.url}}" class="img-thumbnail" alt="User logo" style="width: 200px; height: 200px">
+    <h4>{{user.username}}</h4>
     {%if user.first_name %}<h5>Name: {{user.first_name}} </h5>{% endif %}
     {%if user.age %}<h5> Age: {{user.age}}</h5>{%endif%}
     <h5>Email: {{user.email}}</h5>
+    <h5>Date joined: {{user.date_joined}}</h5>
 {% endblock %}
 

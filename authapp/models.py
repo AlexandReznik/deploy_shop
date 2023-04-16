@@ -32,6 +32,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             "unique": _("A user with that email address already exists."),
         },
     )
+    image = models.ImageField(upload_to='users/',
+                              default='users/default_user_img.png')
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
