@@ -6,6 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from authapp import forms
 from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from .forms import UserUpdateForm
 
 
 class RegisterView(CreateView):
@@ -25,5 +29,22 @@ class CustomLogoutView(LogoutView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProfileView(TemplateView):
+# class ProfileView(TemplateView):
+#     template_name = 'authapp/profile.html'
+
+
+class ProfileView(View):
+    form_class = UserUpdateForm
     template_name = 'authapp/profile.html'
+
+    def get(self, request):
+        form = self.form_class(instance=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(
+            request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('http://127.0.0.1:8000/authapp/profile/')
+        return render(request, self.template_name, {'form': form})

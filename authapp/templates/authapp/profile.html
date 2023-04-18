@@ -1,4 +1,5 @@
 {% extends 'authapp/base.html' %}
+{% load crispy_forms_tags  %}
 {% block content %}
     <h1>Hi, {{user.username}}</h1>
     <img src="{{user.image.url}}" class="img-thumbnail" alt="User logo" style="width: 200px; height: 200px">
@@ -7,5 +8,12 @@
     {%if user.age %}<h5> Age: {{user.age}}</h5>{%endif%}
     <h5>Email: {{user.email}}</h5>
     <h5>Date joined: {{user.date_joined}}</h5>
+    <hr>
+    <h4>Change data</h4>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary my-3">Save</button>
+    </form>
 {% endblock %}
 
