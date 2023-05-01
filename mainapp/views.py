@@ -5,7 +5,8 @@ from django.views.generic import TemplateView, ListView, View
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, FileResponse
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from mainapp import forms
@@ -16,6 +17,8 @@ from django.contrib import messages
 from .models import Product, BasketItem, Category
 from rest_framework.viewsets import ModelViewSet
 from .serializers import ProductModelSerializer, CategoryModelSerializer
+from django.core.paginator import Paginator
+from config import settings
 
 
 def basket(request):
@@ -25,13 +28,20 @@ def basket(request):
     return render(request, 'mainapp/basket.html', context)
 
 
-class MainPageView(TemplateView):
+class MainPageView(ListView):
     template_name = "mainapp/index.html"
-    paginate_by = 15
+    paginate_by = 3
+    context_object_name = 'objects'
+    model = mainapp_models.Product
+    ordering = ['-created_at']
 
     def get_context_data(self, **kwargs):
         context = super(MainPageView, self).get_context_data(**kwargs)
         context["objects"] = Product.objects.all()
+        paginator = Paginator(context['objects'], self.paginate_by)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
         return context
 
 
@@ -129,3 +139,26 @@ class ProductModelViewSet(ModelViewSet):
 class CategoryModelViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategoryModelSerializer
+
+
+class LogView(TemplateView):
+    template_name = "mainapp/log_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LogView, self).get_context_data(**kwargs)
+        log_slice = []
+        with open(settings.LOG_FILE, "r") as log_file:
+            for i, line in enumerate(log_file):
+                if i == 1000:  # first 1000 lines
+                    break
+                log_slice.insert(0, line)  # append at start
+            context["log"] = "".join(log_slice)
+        return context
+
+
+class LogDownloadView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, *args, **kwargs):
+        return FileResponse(open(settings.LOG_FILE, "rb"))

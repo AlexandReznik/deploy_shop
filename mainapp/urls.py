@@ -19,5 +19,6 @@ urlpatterns = [
     path('category/<int:category_id>/',
          views.product_list_by_category, name='product_list_by_category'),
     path('categories/', views.CategoryListView.as_view(), name='categories'),
-
+    path("log_view/", views.LogView.as_view(), name="log_view"),
+    path("log_download/", views.LogDownloadView.as_view(), name="log_download"),
 ]

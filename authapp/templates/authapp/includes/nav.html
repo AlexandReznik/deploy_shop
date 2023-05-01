@@ -12,7 +12,8 @@
         
         {% if user.is_authenticated %}<a href="{% url 'authapp:logout' %}" class="nav-link">Logout</a> <a href="{% url 'authapp:profile' %}" class="nav-link">Profile</a>{% else %}<a href="{% url 'authapp:login' %}" class="nav-link">Login</a></li>{% endif %}
         {% if user.is_anonymous %}<a href="{% url 'authapp:register' %}" class="nav-link">Sign in</a>{% endif %}
-        {% if user.is_superuser %}<a href="{% url 'admin:index' %}" class="nav-link">Admin</a>{% endif %}
+        {% if user.is_superuser %}<a href="{% url 'admin:index' %}" class="nav-link">Admin</a> <a class="nav-link" href="{% url 'mainapp:log_view' %}"
+        target="_blank">Logs</a>{% endif %}
         <a href="{% url 'mainapp:basket' %}" class="nav-link">Basket</a>
         <a href="{% url 'mainapp:categories' %}" class="nav-link">Categories</a>
         <a href='http://127.0.0.1:8000/swagger/' class="nav-link">API</a>
