@@ -23,6 +23,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 from django.conf import settings
 from django.conf.urls.static import static
+import debug_toolbar
 
 
 router = DefaultRouter()
@@ -57,5 +58,6 @@ urlpatterns = [
 
 
 if settings.DEBUG:
+    urlpatterns.append(path("__debug__/", include(debug_toolbar.urls)))
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
