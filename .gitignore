@@ -1,5 +1,5 @@
 /.vscode
-/db.sqlite3
+/db1.sqlite3
 /new_db.sqlite3
 /env
 /var
